@@ -1,17 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <title>Vanilla JavaScript App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spielmorgen – Zuteilung</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- SheetJS zum Parsen der Excel-Datei -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+  <script src="app.js" defer></script>
 </head>
-
 <body>
-  <main>
-    <h1>Vanilla JavaScript App</h1>
-  </main>
-</body>
+  <header class="container">
+    <h1>Spielmorgen – Zuteilungstool</h1>
+    <p>Verteile Kinder über 4 Blöcke auf Spiele nach Präferenzen, Kapazitäten und Mindestbelegung.</p>
+  </header>
 
+  <main class="container">
+    <section class="card">
+      <h2>Einstellungen</h2>
+      <form id="config-form">
+        <div class="grid">
+          <label>
+            <span>Anzahl Spiele (gesamt)</span>
+            <input id="input-game-count" type="number" min="1" step="1" required placeholder="z. B. 8" />
+          </label>
+          <label>
+            <span>Max. Teilnehmende pro Spiel und Block</span>
+            <input id="input-capacity" type="number" min="1" step="1" required placeholder="z. B. 10" />
+          </label>
+        </div>
+
+        <details class="hint">
+          <summary>Excel-Format</summary>
+          <ul>
+            <li><b>Spalte F:</b> Präferenzen mit „;“ getrennt (höchste Priorität zuerst)</li>
+            <li><b>Spalte G:</b> Vorname</li>
+            <li><b>Spalte H:</b> Nachname</li>
+            <li><b>Zeile 1:</b> Überschriften</li>
+            <li><b>Dateiname:</b> Spielpraeferenzen.xlsx im gleichen Verzeichnis</li>
+          </ul>
+        </details>
+
+        <div class="actions">
+          <button type="submit" class="primary">Plan erstellen</button>
+          <button type="button" id="btn-reset">Zurücksetzen</button>
+        </div>
+      </form>
+
+      <div id="messages" class="messages" aria-live="polite"></div>
+    </section>
+
+    <section id="results-section" class="card hidden">
+      <h2>Ergebnis</h2>
+      <div class="controls">
+        <div class="control">
+          <label><b>Filter Vorname</b>
+            <input type="text" id="filter-vorname" placeholder="Filter..." />
+          </label>
+        </div>
+        <div class="control">
+          <label><b>Filter Nachname</b>
+            <input type="text" id="filter-nachname" placeholder="Filter..." />
+          </label>
+        </div>
+        <div class="control">
+          <label><b>Filter Block</b>
+            <input type="text" id="filter-block" placeholder="Filter..." />
+          </label>
+        </div>
+        <div class="control">
+          <label><b>Filter Spiel</b>
+            <input type="text" id="filter-spiel" placeholder="Filter..." />
+          </label>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="result-table">
+          <thead>
+            <tr>
+              <th data-key="vorname">Vorname</th>
+              <th data-key="nachname">Nachname</th>
+              <th data-key="block">Block</th>
+              <th data-key="spiel">Spiel</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div id="legend" class="legend">
+        <span class="badge ok">Zugewiesen</span>
+        <span class="badge warn">Wiederholung unvermeidbar</span>
+        <span class="badge info">Hinweis</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p>Die Zuteilung ist heuristisch und versucht, Präferenzen fair zu berücksichtigen und Kapazitäten einzuhalten.</p>
+  </footer>
+</body>
 </html>
